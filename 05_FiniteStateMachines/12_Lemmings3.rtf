@@ -1,0 +1,71 @@
+{\rtf1\ansi\ansicpg950\cocoartf2761
+\cocoatextscaling0\cocoaplatform0{\fonttbl\f0\fswiss\fcharset0 Helvetica;}
+{\colortbl;\red255\green255\blue255;}
+{\*\expandedcolortbl;;}
+\paperw11900\paperh16840\margl1440\margr1440\vieww11520\viewh8400\viewkind0
+\pard\tx566\tx1133\tx1700\tx2267\tx2834\tx3401\tx3968\tx4535\tx5102\tx5669\tx6236\tx6803\pardirnatural\partightenfactor0
+
+\f0\fs24 \cf0 module top_module(\
+    input clk,\
+    input areset,    // Freshly brainwashed Lemmings walk left.\
+    input bump_left,\
+    input bump_right,\
+    input ground,\
+    input dig,\
+    output walk_left,\
+    output walk_right,\
+    output aaah,\
+    output digging ); \
+\
+    parameter LEFT = 3'b000, RIGHT = 3'b001, FALL_L = 3'b010, FALL_R = 3'b011, DIG_L = 3'b100, DIG_R = 3'b101;\
+    reg [2:0] state, next_state;\
+    \
+    always @(*) begin\
+        case (state)\
+            LEFT : begin\
+                if (~ground)\
+                    next_state <= FALL_L;\
+                else if (dig)\
+                    next_state <= DIG_L;\
+                else\
+                    next_state <= (bump_left)? RIGHT : LEFT;\
+            end\
+            RIGHT : begin\
+                if (~ground)\
+                    next_state <= FALL_R;\
+                else if (dig)\
+                    next_state <= DIG_R;\
+                else\
+                    next_state <= (bump_right)? LEFT : RIGHT;\
+            end\
+            FALL_L : next_state <= (ground)? LEFT : FALL_L;\
+            FALL_R : next_state <= (ground)? RIGHT : FALL_R;\
+            DIG_L : begin\
+                if (ground)\
+                    next_state <= DIG_L;\
+                else\
+                    next_state <= FALL_L;\
+            end\
+            DIG_R : begin\
+                if (ground)\
+                    next_state <= DIG_R;\
+                else\
+                    next_state <= FALL_R;\
+            end\
+        endcase\
+    end\
+    \
+    always @(posedge clk, posedge areset)begin\
+        if (areset)\
+            state <= LEFT;\
+        else\
+            state <= next_state;\
+    end\
+    \
+    assign walk_left = (state == LEFT);\
+    assign walk_right = (state == RIGHT);\
+    assign aaah = (state == FALL_L)|(state == FALL_R);\
+    assign digging = (state == DIG_L)|(state == DIG_R);\
+    \
+endmodule\
+}

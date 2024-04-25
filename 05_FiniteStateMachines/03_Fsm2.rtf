@@ -1,0 +1,38 @@
+{\rtf1\ansi\ansicpg950\cocoartf2761
+\cocoatextscaling0\cocoaplatform0{\fonttbl\f0\fswiss\fcharset0 Helvetica;}
+{\colortbl;\red255\green255\blue255;}
+{\*\expandedcolortbl;;}
+\paperw11900\paperh16840\margl1440\margr1440\vieww11520\viewh8400\viewkind0
+\pard\tx566\tx1133\tx1700\tx2267\tx2834\tx3401\tx3968\tx4535\tx5102\tx5669\tx6236\tx6803\pardirnatural\partightenfactor0
+
+\f0\fs24 \cf0 module top_module(\
+    input clk,\
+    input areset,    // Asynchronous reset to OFF\
+    input j,\
+    input k,\
+    output out); //  \
+\
+    parameter OFF=0, ON=1; \
+    reg state, next_state;\
+\
+    always @(*) begin\
+        // State transition logic\
+        case (state)\
+            OFF : next_state <= (j)? ON : OFF;\
+            ON : next_state <= (k)? OFF : ON;\
+        endcase\
+    end\
+\
+    always @(posedge clk, posedge areset) begin\
+        // State flip-flops with asynchronous reset\
+        if (areset)\
+            state <= OFF;\
+        else\
+            state <= next_state;\
+    end\
+\
+    // Output logic\
+    assign out = (state) ? 1 : 0;\
+\
+endmodule\
+}
