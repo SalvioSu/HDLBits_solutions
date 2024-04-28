@@ -1,0 +1,43 @@
+module top_module(
+    input clk,
+    input [7:0] in,
+    input reset,    // Synchronous reset
+    output [23:0] out_bytes,
+    output done); //
+
+    // FSM from fsm_ps2
+	parameter Byte1 = 1, Byte2 = 2, Byte3 = 3, Done = 0;
+    reg[1:0] state, next_state;
+    reg [23:0] tmp_out;
+    // State transition logic (combinational)
+    always @(*) begin
+        case (state)
+            Byte1 : next_state <= (in[3])? Byte2 : Byte1;
+            Byte2 : next_state <= Byte3;
+            Byte3 : next_state <= Done;
+            Done : next_state <= (in[3])? Byte2 : Byte1;
+        endcase
+    end
+    // State flip-flops (sequential)
+    always @(posedge clk) begin
+        if (reset)
+            state <= Byte1;
+        else
+            state <= next_state;
+    end
+    
+    // New: Datapath to store incoming bytes.
+    always @(*) begin
+        case (state)
+            Byte1 : tmp_out[23:16] <= in;
+            Byte2 : tmp_out[15:8] <= in;
+            Byte3 : tmp_out[7:0] <= in;
+            Done : tmp_out[23:16] <= in;
+        endcase
+    end
+    
+    assign done = (state == Done)? 1 : 0;
+    assign out_bytes = (state == Byte3)? tmp_out : out_bytes;
+    
+endmodule
+
