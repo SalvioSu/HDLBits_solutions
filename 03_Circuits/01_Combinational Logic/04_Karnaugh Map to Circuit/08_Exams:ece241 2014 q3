@@ -1,0 +1,15 @@
+module top_module (
+    input c,
+    input d,
+    output [3:0] mux_in
+); 
+    always @(*) begin
+        if (c==0) begin
+            mux_in[3:0] = (d==0)? 4'b0100 : 4'b0001;
+        end
+        if (c==1) begin
+            mux_in[3:0] = (d==1)? 4'b1001 : 4'b0101;
+        end
+    end
+endmodule
+

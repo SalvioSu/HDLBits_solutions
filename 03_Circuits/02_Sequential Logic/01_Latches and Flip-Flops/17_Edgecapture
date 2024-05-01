@@ -1,0 +1,18 @@
+module top_module (
+    input clk,
+    input reset,
+    input [31:0] in,
+    output [31:0] out
+);
+    reg [31:0] reg_in;
+    always @(posedge clk) begin
+        reg_in[31:0] <= in[31:0];
+        if (reset) begin
+            out[31:0] <= 0;
+        end else begin
+            out[31:0] <= reg_in[31:0]& ~in[31:0]|out;
+        end
+    end
+    
+endmodule
+

@@ -1,0 +1,11 @@
+module top_module (
+    input [7:0] a, b, c, d,
+    output [7:0] min);//
+
+    // assign intermediate_result1 = compare? true: false;
+    wire[7:0] w1, w2;
+    assign w1[7:0] = (a[7:0] < b[7:0])? a[7:0]:b[7:0];
+    assign w2[7:0] = (c[7:0] < d[7:0])? c[7:0]:d[7:0];
+    assign min[7:0] = (w1[7:0] < w2[7:0])? w1[7:0]:w2[7:0];
+endmodule
+

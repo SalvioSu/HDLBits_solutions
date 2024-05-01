@@ -1,0 +1,13 @@
+module top_module (
+    input clk,
+    input w, R, E, L,
+    output Q
+);
+    always @(posedge clk) begin
+        case (L)
+            0 : Q = (E == 0)? Q:w;
+            1 : Q = R;
+        endcase
+    end
+endmodule
+

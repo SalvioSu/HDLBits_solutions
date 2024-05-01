@@ -1,0 +1,20 @@
+module top_module( 
+    input [399:0] a, b,
+    input cin,
+    output cout,
+    output [399:0] sum );
+
+    wire [99:0] temp;
+    
+    bcd_fadd bcd_inst[99:0](
+        .a(a[399:0]),
+        .b(b[399:0]),
+        .cin({temp[98:0], cin}),
+        .cout(temp[99:0]),
+        .sum(sum[399:0])
+    );
+    
+    assign cout = temp[99];
+    
+endmodule
+

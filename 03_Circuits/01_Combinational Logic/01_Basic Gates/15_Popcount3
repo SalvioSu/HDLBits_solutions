@@ -1,0 +1,15 @@
+module top_module( 
+    input [2:0] in,
+    output [1:0] out );
+    wire[1:0] count;
+    always @(*) begin
+        count[1:0] = 0;
+        for (int i=0; i<3; i++) begin
+            if (in[i])
+                count[1:0] += 1;
+        end
+        out[1:0] = count[1:0];
+    end
+            
+endmodule
+

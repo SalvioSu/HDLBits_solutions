@@ -1,0 +1,20 @@
+module top_module ( 
+    input clk, 
+    input [7:0] d, 
+    input [1:0] sel, 
+    output [7:0] q 
+);
+    wire [7:0] w1, w2, w3;
+    my_dff8 inst1(clk, d[7:0], w1[7:0]);
+    my_dff8 inst2(clk, w1[7:0], w2[7:0]);
+    my_dff8 inst3(clk, w2[7:0], w3[7:0]);
+    	// 这是实现4选1选择器的一种方法
+	always @(*)		// 组合逻辑always块
+		case(sel)
+			2'h0: q = d;
+			2'h1: q = w1;
+			2'h2: q = w2;
+			2'h3: q = w3;
+		endcase
+endmodule
+
