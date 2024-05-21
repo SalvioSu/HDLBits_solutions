@@ -1,0 +1,33 @@
+module top_module (
+    input clk,
+    input aresetn,    // Asynchronous active-low reset
+    input x,
+    output z ); 
+    parameter idle = 2'b00, s1 = 2'b01, s2 = 2'b10;
+    reg [1:0] state, next_state;
+    always @(negedge aresetn, posedge clk) begin
+        if (~aresetn)
+            state <= idle;
+        else
+	        state <= next_state;
+    end
+    always @(*) begin
+        z = 0;
+        case (state)
+            idle: next_state = (x)? s1:idle;
+            s1: next_state = (x)? s1:s2;
+            s2: begin
+                if (x) begin
+                    z = 1;
+                    next_state = s1;
+                end
+                else begin
+                    next_state = idle;
+                end
+            end
+            default: next_state = idle;
+        endcase
+    end
+    
+endmodule
+

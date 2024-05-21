@@ -1,0 +1,56 @@
+module top_module(
+    input clk,
+    input in,
+    input reset,    // Synchronous reset
+    output [7:0] out_byte,
+    output done
+); //
+
+    // Use FSM from Fsm_serial
+	parameter IDLE = 4'b0000, START = 4'b0001, S1 = 4'b0010, S2 = 4'b0011;
+    parameter S3 = 4'b0100, S4 = 4'b0101, S5 = 4'b0110, S6 = 4'b0111;
+    parameter S7 = 4'b1000, S8 = 4'b1001, STOP = 4'b1010, ERROR = 4'b1011;
+    reg[3:0] state, next_state;
+    
+    always @(*) begin
+        case (state)
+            IDLE:next_state <= (in==0)? START:IDLE;
+            START:next_state <= S1;
+            S1:next_state <= S2;
+            S2:next_state <= S3;
+            S3:next_state <= S4;
+            S4:next_state <= S5;
+            S5:next_state <= S6;
+            S6:next_state <= S7;
+            S7:next_state <= S8;
+            S8:next_state <= (in==1)? STOP:ERROR;
+            STOP:next_state <= (in==1)? IDLE:START;
+            ERROR:next_state <= (in==1)? IDLE:ERROR;
+            default:next_state <= IDLE;
+        endcase
+    end
+    
+    always @(posedge clk) begin
+        if (reset)
+            state <= IDLE;
+        else
+            state <= next_state;
+    end
+    
+    assign done = (state==STOP)?1:0;
+    // New: Datapath to latch input bits.
+    reg [7:0] data;
+    always @(posedge clk) begin
+        case (next_state)
+            S1:data[0] = in;
+            S2:data[1] = in;
+            S3:data[2] = in;
+            S4:data[3] = in;
+            S5:data[4] = in;
+            S6:data[5] = in;
+            S7:data[6] = in;
+            S8:data[7] = in;
+        endcase
+    end
+    assign out_byte = (state==STOP)?data:0;
+endmodule

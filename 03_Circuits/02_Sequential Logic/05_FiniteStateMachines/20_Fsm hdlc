@@ -1,0 +1,36 @@
+module top_module(
+    input clk,
+    input reset,    // Synchronous reset
+    input in,
+    output disc,
+    output flag,
+    output err);
+	parameter [3:0] none=4'b0000, one=4'b0001, two=4'b0010, three=4'b0011, four=4'b0100;
+    parameter [3:0] five=4'b0101, six=4'b0110, DISC=4'b0111, FLAG=4'b1000, ERR=4'b1001;
+    reg [3:0] state, next_state;
+    always @(posedge clk) begin
+        if (reset)
+            state <= none;
+        else
+            state <= next_state;
+    end
+    always @(*) begin
+        case (state)
+            none: next_state = (in)? one:none;
+            one: next_state = (in)? two:none;
+            two: next_state = (in)? three:none;
+            three: next_state = (in)? four:none;
+            four: next_state = (in)? five:none;
+            five: next_state=(in)? six:DISC;
+            six: next_state=(in)? ERR:FLAG;
+            DISC: next_state=(in)? one:none;
+            FLAG: next_state=(in)? one:none;
+            ERR: next_state=(in)? ERR:none;
+            default: next_state = none;
+        endcase
+    end
+    assign disc = (state == DISC);
+    assign flag = (state == FLAG);
+    assign err = (state == ERR);
+endmodule
+
