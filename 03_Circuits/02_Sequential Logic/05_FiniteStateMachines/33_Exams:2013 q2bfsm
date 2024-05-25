@@ -1,0 +1,34 @@
+module top_module (
+    input clk,
+    input resetn,    // active-low synchronous reset
+    input x,
+    input y,
+    output f,
+    output g
+); 
+	parameter A=0, f_state=1, x_start=2, x1=3, x10=4, x101=5, y1=6, y0=7, y00=8;
+    reg [3:0] state, next_state;
+    always @(posedge clk) begin
+        if (!resetn)
+            state <= A;
+        else
+            state <= next_state;
+    end
+    always @(*) begin
+        case (state)
+            A: next_state = (resetn)? f_state:A;
+            f_state: next_state = x_start;
+            x_start: next_state = (x)? x1:x_start;
+            x1: next_state = (x)? x1:x10;
+            x10: next_state = (x)? x101:x_start;
+            x101: next_state = (y)? y1:y0;
+            y1: next_state = y1;
+            y0: next_state = (y)? y1:y00;
+            y00: next_state = y00;
+            default: next_state = A;
+        endcase
+    end
+    assign f = (state==f_state);
+    assign g = (state==x101 | state==y1 | state==y0);
+endmodule
+
