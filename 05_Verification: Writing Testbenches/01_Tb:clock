@@ -1,0 +1,11 @@
+module top_module ( );
+	reg clk;
+    parameter cycle = 5;
+    initial
+        clk = 0;
+    always #(cycle) begin
+        clk = ~ clk;
+    end
+    dut inst1(clk);
+endmodule
+

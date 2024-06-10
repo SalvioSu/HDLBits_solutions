@@ -1,0 +1,12 @@
+module top_module ();
+	reg clk, q, reset;
+    initial begin
+        clk = 0;
+        reset = 1;
+        # 10 reset = 0;
+    end
+    always #5
+        clk = ~clk;
+    tff inst(clk, reset, 1, q);
+endmodule
+
